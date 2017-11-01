@@ -120,8 +120,31 @@ function updateSubscriptionOnServer(subscription) {
   if (subscription) {
     subscriptionJson.textContent = JSON.stringify(subscription);
     subscriptionDetails.classList.remove('is-invisible');
+
+    $.ajax({
+      url: window.location.origin + '/subscribe',
+      data: JSON.stringify(subscription),
+      type: 'POST',
+      contentType: 'application/json',
+      success: function(data, textStatus) {
+        console.log('Query succeeded:', data);
+        console.log(textStatus);
+      }
+    });
+
   } else {
     subscriptionDetails.classList.add('is-invisible');
+
+    $.ajax({
+      url: window.location.origin + '/unsubscribe',
+      data: JSON.stringify({ some: "other data"}),
+      type: 'POST',
+      contentType: 'application/json',
+      success: function(data, textStatus) {
+        console.log('Query succeeded:', data);
+        console.log(textStatus);
+      }
+    });
   }
 }
 
