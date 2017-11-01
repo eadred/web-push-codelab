@@ -21,17 +21,20 @@
 
 'use strict';
 
+const DefaultUrl = 'http://www.zuehlke.com';
+
 self.addEventListener('push', function (event) {
-    const message = event.data ? event.data.text() : '<no data>';
-    console.log('[Service Worker] Push Received.');
-    console.log(`[Service Worker] Push had this data: "${message}"`);
+    const data = event.data ? event.data.json() : {msg: '<no data>'};
+    if (!data.url) data.url = DefaultUrl;
+
+    console.log(`[Service Worker] Push had this data: "${JSON.stringify(data)}"`);
 
     const title = 'Push Codelab';
     const options = {
-        body: message,
+        body: data.msg,
         icon: 'images/icon.png',
         badge: 'images/badge.png', // Only used by Android?
-        tag: 'FixedTag'
+        tag: 'FixedTag' // Ensure only one message ever shown
     };
 
     const notificationPromise = self.registration.showNotification(title, options);
@@ -40,10 +43,11 @@ self.addEventListener('push', function (event) {
 
 self.addEventListener('notificationclick', function (event) {
     console.log('[Service Worker] Notification click Received.');
+    console.log(JSON.stringify(event));
 
     event.notification.close();
 
     event.waitUntil(
-        clients.openWindow('https://developers.google.com/web/')
+        clients.openWindow(DefaultUrl) // How can we get the Url associated with the message?
     );
 });

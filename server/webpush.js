@@ -29,7 +29,13 @@ module.exports = function() {
 
     result.notify = function(payload) {
         if (result.subscription) {
-            webpush.sendNotification(result.subscription, payload)
+            if (typeof payload === 'string') {
+                payload = { msg: payload };
+            }
+
+            payloadBuffer = Buffer.from(JSON.stringify(payload));
+
+            webpush.sendNotification(result.subscription, payloadBuffer)
             .catch(err => console.error(err));
         }
     }
